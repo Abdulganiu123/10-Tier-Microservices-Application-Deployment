@@ -4,7 +4,12 @@
 
 ![Continuous Integration](https://github.com/GoogleCloudPlatform/microservices-demo/workflows/Continuous%20Integration%20-%20Main/Release/badge.svg)
 
-https://medium.com/@samsorrahman/10-tier-application-deployment-on-aws-eks-a8a8abcd46dd - Use this link for a dry run book on how to deploy the 10tier application  [Microservices] into a kubernetes cluster. from image building to deployment.
+
+
+**Note**   https://medium.com/@samsorrahman/10-tier-application-deployment-on-aws-eks-a8a8abcd46dd - Use this link for a dry run book on how to deploy the 10tier application  [Microservices] into a kubernetes cluster. From image building to deployment.
+
+
+
 
 **Online Boutique** is a cloud-first microservices demo application.
 Online Boutique consists of an 11-tier microservices application. The application is a
