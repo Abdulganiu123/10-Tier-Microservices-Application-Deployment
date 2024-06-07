@@ -2,15 +2,15 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.adService.name }}
-  namespace: {{.Release.Namespace}}
-  {{- if not .Values.serviceAccounts.annotationsOnlyForCartservice }}
-  {{- with .Values.serviceAccounts.annotations }}
+  namespace: {{ .Release.Namespace }}
+{{- if not .Values.serviceAccounts.annotationsOnlyForCartservice }}
+{{- with .Values.serviceAccounts.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  {{- end }}
----
+{{ toYaml . | nindent 4 }}
 {{- end }}
+{{- end }}
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,21 +25,21 @@ spec:
       labels:
         app: {{ .Values.adService.name }}
     spec:
-      {{- if .Values.serviceAccounts.create }}
+{{- if .Values.serviceAccounts.create }}
       serviceAccountName: {{ .Values.adService.name }}
-      {{- else }}
+{{- else }}
       serviceAccountName: default
-      {{- end }}
+{{- end }}
       terminationGracePeriodSeconds: 5
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
-        {{- if .Values.seccompProfile.enable }}
+{{- if .Values.seccompProfile.enable }}
         seccompProfile:
           type: {{ .Values.seccompProfile.type }}
-        {{- end }}
+{{- end }}
       containers:
       - name: server
         securityContext:
@@ -49,38 +49,39 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        {{- if .Values.nativeGrpcHealthCheck }}
+{{- if .Values.nativeGrpcHealthCheck }}
         image: {{ .Values.images.repository }}/{{ .Values.adService.name }}:{{ .Values.images.tag | default .Chart.AppVersion }}-native-grpc-probes
-        {{- else }}
+{{- else }}
         image: {{ .Values.images.repository }}/{{ .Values.adService.name }}:{{ .Values.images.tag | default .Chart.AppVersion }}
-        {{- end }}
+{{- end }}
         ports:
         - containerPort: 9555
         env:
         - name: PORT
           value: "9555"
         resources:
-          {{- toYaml .Values.adService.resources | nindent 10 }}
+{{ toYaml .Values.adService.resources | nindent 10 }}
         readinessProbe:
           initialDelaySeconds: 20
           periodSeconds: 15
-          {{- if .Values.nativeGrpcHealthCheck }}
+{{- if .Values.nativeGrpcHealthCheck }}
           grpc:
             port: 9555
-          {{- else }}
+{{- else }}
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:9555"]
-          {{- end }}
+{{- end }}
         livenessProbe:
           initialDelaySeconds: 20
           periodSeconds: 15
-          {{- if .Values.nativeGrpcHealthCheck }}
+{{- if .Values.nativeGrpcHealthCheck }}
           grpc:
             port: 9555
-          {{- else }}
+{{- else }}
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:9555"]
-          {{- end }}
+{{- end }}
+
 ---
 apiVersion: v1
 kind: Service
@@ -95,6 +96,7 @@ spec:
   - name: grpc
     port: 9555
     targetPort: 9555
+
 {{- if .Values.networkPolicies.create }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -120,6 +122,7 @@ spec:
   egress:
   - {}
 {{- end }}
+
 {{- if .Values.sidecars.create }}
 ---
 apiVersion: networking.istio.io/v1beta1
@@ -134,10 +137,11 @@ spec:
   egress:
   - hosts:
     - istio-system/*
-    {{- if .Values.opentelemetryCollector.create }}
+{{- if .Values.opentelemetryCollector.create }}
     - ./{{ .Values.opentelemetryCollector.name }}.{{ .Release.Namespace }}.svc.cluster.local
-    {{- end }}
 {{- end }}
+{{- end }}
+
 {{- if .Values.authorizationPolicies.create }}
 ---
 apiVersion: security.istio.io/v1beta1
@@ -153,18 +157,7 @@ spec:
   - from:
     - source:
         principals:
-        {{- if .Values.serviceAccounts.create }}
+{{- if .Values.serviceAccounts.create }}
         - cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.frontend.name }}
-        {{- else }}
-        - cluster.local/ns/{{ .Release.Namespace }}/sa/default
-        {{- end }}
-    to:
-    - operation:
-        paths:
-        - /hipstershop.AdService/GetAds
-        methods:
-        - POST
-        ports:
-        - "9555"
-{{- end }}
-{{- end }}
+{{- else }}
+        - cluster.local/ns/{{ .Release.Namespace
