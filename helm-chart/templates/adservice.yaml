@@ -3,12 +3,16 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: jenkins
-  namespace: webapps
+  name: {{ .Values.adService.name }}
+  namespace: {{.Release.Namespace}}
+{{- if not .Values.serviceAccounts.annotationsOnlyForCartservice }}
+{{- with .Values.serviceAccounts.annotations }}  
   annotations:
-    # Add any annotations here if needed
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
 ---
-
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
