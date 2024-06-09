@@ -6,7 +6,7 @@
 
 
 
-**Note**   https://medium.com/@samsorrahman/10-tier-application-deployment-on-aws-eks-a8a8abcd46dd - Use this link for a dry run book on how to deploy the 10tier application  [Microservices] into a kubernetes cluster. From image building to deployment.
+**Note**   https://medium.com/@samsorrahman/10-tier-application-deployment-on-aws-eks-a8a8abcd46dd - Use this link for a dry run book on how to deploy the 10tier application  [Microservices] with the help of jenkins integration [CI/CD], into a kubernetes cluster. From image building to deployment.
 
 
 
